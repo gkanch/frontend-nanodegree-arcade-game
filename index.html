@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Effective JavaScript: Frogger</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JavaScript Game: Frogger</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 text-left">
+                <!-- Game -->
+                Game
+            </div>
+            <div id="status" class="col-sm-4 text-center">
+                <!-- Status Update -->
+                Status
+            </div>
+            <div id="timer" class="col-sm-4 text-right">
+                <!-- Timer -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="game-canvas">
+                    <!-- canvas to be inserted by engine.js -->
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>

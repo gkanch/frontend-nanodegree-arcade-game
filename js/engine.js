@@ -25,9 +25,13 @@ var Engine = (function (global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+    //var canvasBackground = doc.createElement('canvas'),
+    //    ctxBackground = canvasBackground.getContext('2d');
+
     canvas.width = MAX_X; // 505;
     canvas.height = MAX_Y; // 606;
-    doc.body.appendChild(canvas);
+    //doc.getElementById("game-canvas").appendChild(canvasBackground);
+    doc.getElementById("game-canvas").appendChild(canvas); //doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
     * and handles properly calling the update and render methods.
@@ -95,6 +99,12 @@ var Engine = (function (global) {
             enemy.update(dt);
         });
         player.update();
+
+        allGems.forEach(function (gem) {
+            gem.update(dt);
+        });
+
+        game.update(dt);
     }
 
     /* This function initially draws the "game level", it will then call
@@ -109,11 +119,11 @@ var Engine = (function (global) {
         */
         var rowImages = [
                 'images/grass-block.png',   // Top row is grass
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/stone-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/stone-block.png',   // Row 1 of 4 of stone
+                'images/stone-block.png',   // Row 2 of 4 of stone
+                'images/stone-block.png',   // Row 3 of 4 of stone
+                'images/stone-block.png',   // Row 4 of 4 of stone
+                'images/grass-block.png'    // Bottom row is grass
             ],
             numRows = 6,
             numCols = 5,
@@ -135,7 +145,19 @@ var Engine = (function (global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
+
         renderEntities();
+    }
+
+    // Render symbol for lives
+    function renderLiveSymbol(liveCount) {
+        var liveImage = 'images/char-boy-small.png',
+            liveImage_X = 0,
+            liveImage_Y = 550,
+            liveImage_Xincrement = 35;
+        for (var live = 0; live < liveCount; live++) {
+            ctx.drawImage(Resources.get(liveImage), liveImage_X + (liveImage_Xincrement * live), liveImage_Y);
+        }
     }
 
     /* This function is called by the render function and is called on each game
@@ -151,6 +173,15 @@ var Engine = (function (global) {
         });
 
         player.render();
+        renderLiveSymbol(player.remainingLives); // player lives
+
+        allGems.forEach(function (gem) {
+            gem.render();
+        });
+
+        allRocks.forEach(function (rock) {
+            rock.render();
+        });
     }
 
     /* This function does nothing but it could have been a good place to
@@ -159,6 +190,9 @@ var Engine = (function (global) {
     */
     function reset() {
         // noop
+        ctx.font = "50px serif";
+        ctx.fillStyle = "#0F0";
+        ctx.fillText("Game Over", 0, 0);
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -167,14 +201,18 @@ var Engine = (function (global) {
     */
     Resources.load([
         'images/stone-block.png',
-        'images/water-block.png',
+    //'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/gem-blue.png',
-        'images/gem-green.png',
+    //'images/gem-blue.png',
+    //'images/gem-green.png',
         'images/gem-orange.png',
-        'images/rock.png'
+        'images/rock.png',
+        'images/char-boy-small.png',
+    //'images/char-boy-blue-gem.png',
+    //'images/char-boy-green-gem.png',
+        'images/char-boy-orange-gem.png'
     ]);
     Resources.onReady(init);
 

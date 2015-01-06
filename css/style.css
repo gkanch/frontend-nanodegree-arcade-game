@@ -1,3 +1,7 @@
 body {
     text-align: center;
 }
+
+html {
+    min-width: 650px;
+}
