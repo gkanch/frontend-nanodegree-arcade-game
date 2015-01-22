@@ -67,7 +67,6 @@ var Gem = function (sprite) {
 }
 Gem.prototype = Object.create(AssetBase.prototype);
 Gem.prototype.constructor = Gem;
-
 Gem.prototype.update = function () {
     // check for Collected
     if (!this.collected) {
@@ -126,8 +125,9 @@ Player.prototype.update = function (dt) {
 
 Player.prototype.checkBarrier = function (x, y) {
     var isBlocked = false;
+    var index;
     // check for Barrier due to rock
-    for (var index in allRocks) {
+    for (index in allRocks) {
         if ((Math.abs(allRocks[index].x - x) < 50) && (Math.abs(allRocks[index].y - y) < 50)) {
             isBlocked = true;
             break;
@@ -138,7 +138,7 @@ Player.prototype.checkBarrier = function (x, y) {
         return isBlocked;
     }
     else {
-        for (var index in allGems) {
+        for (index in allGems) {
             if (allGems[index].collected === true &&
                     (Math.abs(allGems[index].x - x) < 50) &&
                     (Math.abs(allGems[index].y - y) < 50)) {
@@ -186,27 +186,48 @@ Player.prototype.handleInput = function (key) {
 var Game = function () {
     this.timeLeft = TIME_LIMIT;
     this.isGameOver = false;
+    this.isGameWon = false;
 };
 Game.prototype.update = function (dt) {
     // Count down per time limit
-    this.timeLeft -= (10 * dt);
-    if (this.timeLeft > 0) {
+    if (!this.isGameWon) {
+        this.timeLeft -= (10 * dt);
+    }
+    // Time Left display
+    if (this.timeLeft > 0 && !this.isGameWon) {
         document.getElementById("timer").innerText = "Remaining Time: " + Math.floor(this.timeLeft);
-    } else {
+    }
+    else if (!this.isGameWon) {
         document.getElementById("timer").innerText = "Remaining Time: 0";
     }
+
     if (this.timeLeft < 0 || player.remainingLives == 0) {
         this.gameOver();
     }
+    else {
+        // Update isGameWon status
+        var gemCollectedCount = 0;
+        allGems.forEach(function (gem) {
+            if (gem.collected) {
+                gemCollectedCount += 1;
+            }
+        });
+        if (gemCollectedCount == allGems.length) {
+            this.gameWon();
+        }
+    }
 }
-Game.prototype.gameOver = function () {
+
+Game.prototype.gameOver = function() {
     document.getElementById("status").innerText = "Game Over";
     allEnemies = [];
     this.isGameOver = true;
+}
 
-    //ctx.font = "50px serif";
-    //ctx.fillStyle = "#F00";
-    //ctx.fillText("Game Over", 0, 0);
+Game.prototype.gameWon = function () {
+    document.getElementById("status").innerText = "You Win";
+    allEnemies = [];
+    this.isGameWon = true;
 }
 
 // **** Utility ****
@@ -223,14 +244,15 @@ document.addEventListener('keyup', function (e) {
 });
 
 // **** Instantiate objects ****
+// enemies
 var allEnemies = [];
 var enemy0 = new Enemy(),
     enemy1 = new Enemy(),
     enemy2 = new Enemy(),
     enemy3 = new Enemy(),
     enemy4 = new Enemy();
-allEnemies.push(enemy0); //, enemy1, enemy2, enemy3, enemy4
-
+allEnemies.push(enemy0, enemy1, enemy2, enemy3, enemy4);
+// gems
 var allGems = [];
 var gem0 = new Gem(),
     gem1 = new Gem(),
@@ -239,14 +261,14 @@ gem0.x = GEM_X[0];
 gem1.x = GEM_X[1];
 gem2.x = GEM_X[2];
 allGems.push(gem0, gem1, gem2);
-
+// rocks
 var allRocks = [];
 var rock0 = new Rock(),
     rock1 = new Rock();
 rock0.x = ROCK_X[0];
 rock1.x = ROCK_X[1];
 allRocks.push(rock0, rock1);
-
+// player
 var player = new Player();
-
+// game
 var game = new Game();

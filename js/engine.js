@@ -73,6 +73,20 @@ var Engine = (function (global) {
         main();
     }
 
+    /* handle game reset states - maybe a new game menu or a game over screen
+    * those sorts of things. It's only called once by the init() method.
+    */
+    function reset() {
+        // set default font properties
+        ctx.strokeStyle = "#555555";
+        ctx.lineWidth = 2;
+        ctx.font = "25pt 'Montserrat'";
+        ctx.textAlign = "center";
+        ctx.save();
+        // noop
+        //ctx.clearRect(0, 0, MAX_X, MAX_Y);
+    }
+
     /* This function is called by main (our game loop) and itself calls all
     * of the functions which may need to update entity's data. Based on how
     * you implement your collision detection (when two entities occupy the
@@ -84,7 +98,6 @@ var Engine = (function (global) {
     */
     function update(dt) {
         updateEntities(dt);
-        //checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -95,15 +108,17 @@ var Engine = (function (global) {
     * render methods.
     */
     function updateEntities(dt) {
+        // Update Enemies
         allEnemies.forEach(function (enemy) {
             enemy.update(dt);
         });
+        // Update Player
         player.update();
-
+        // Update Gems
         allGems.forEach(function (gem) {
             gem.update(dt);
         });
-
+        // Update Game status
         game.update(dt);
     }
 
@@ -149,6 +164,7 @@ var Engine = (function (global) {
         renderEntities();
     }
 
+    // ** Helper **
     // Render symbol for lives
     function renderLiveSymbol(liveCount) {
         var liveImage = 'images/char-boy-small.png',
@@ -158,6 +174,29 @@ var Engine = (function (global) {
         for (var live = 0; live < liveCount; live++) {
             ctx.drawImage(Resources.get(liveImage), liveImage_X + (liveImage_Xincrement * live), liveImage_Y);
         }
+    }
+
+    // ** Helper **
+    // Draw rounded button rectangle
+    function drawRoundedRectangle(x, y, width, height, r, color) {
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + width - r, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+        ctx.lineTo(x + width, y + height - r);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        ctx.lineTo(x + r, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        //ctx.stroke();
+
+        ctx.restore();
     }
 
     /* This function is called by the render function and is called on each game
@@ -182,17 +221,29 @@ var Engine = (function (global) {
         allRocks.forEach(function (rock) {
             rock.render();
         });
-    }
 
-    /* This function does nothing but it could have been a good place to
-    * handle game reset states - maybe a new game menu or a game over screen
-    * those sorts of things. It's only called once by the init() method.
-    */
-    function reset() {
-        // noop
-        ctx.font = "50px serif";
-        ctx.fillStyle = "#0F0";
-        ctx.fillText("Game Over", 0, 0);
+        if (game.isGameOver) {
+            drawRoundedRectangle(MAX_X / 4, MAX_Y / 2, 250, 50, 10, "red");
+
+            //ctx.font = "50px serif";
+            ctx.save();
+            ctx.fillStyle = "#FFF";
+            ctx.fillText("Game Over", MAX_X / 2, MAX_Y / 2 + 35);
+            ctx.restore();
+
+            player.sprite = 'images/char-boy-loss.png';
+        }
+        else if (game.isGameWon) {
+            drawRoundedRectangle(MAX_X / 4, MAX_Y / 2, 250, 50, 10, "green");
+
+            //ctx.font = "50px serif";
+            ctx.save();
+            ctx.fillStyle = "#FFF";
+            ctx.fillText("You Win", MAX_X / 2, MAX_Y / 2 + 35);
+            ctx.restore();
+
+            player.sprite = 'images/char-boy-won.png';
+        }
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -201,17 +252,14 @@ var Engine = (function (global) {
     */
     Resources.load([
         'images/stone-block.png',
-    //'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-    //'images/gem-blue.png',
-    //'images/gem-green.png',
+        'images/char-boy-loss.png',
+        'images/char-boy-won.png',
         'images/gem-orange.png',
         'images/rock.png',
         'images/char-boy-small.png',
-    //'images/char-boy-blue-gem.png',
-    //'images/char-boy-green-gem.png',
         'images/char-boy-orange-gem.png'
     ]);
     Resources.onReady(init);
