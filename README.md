@@ -1,6 +1,5 @@
 ## frontend-nanodegree-arcade-game
 ===============================
-
 To play the game, please go to: http://gkanch.github.io/frontend-nanodegree-arcade-game/
 ### How to play
 The greedy bugs has stolen 3 gems from the kingdom of FendJav.  A brave, young prince 
