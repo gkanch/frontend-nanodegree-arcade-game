@@ -25,12 +25,8 @@ var Engine = (function (global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    //var canvasBackground = doc.createElement('canvas'),
-    //    ctxBackground = canvasBackground.getContext('2d');
-
     canvas.width = MAX_X; // 505;
     canvas.height = MAX_Y; // 606;
-    //doc.getElementById("game-canvas").appendChild(canvasBackground);
     doc.getElementById("game-canvas").appendChild(canvas); //doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -61,7 +57,7 @@ var Engine = (function (global) {
         * function again as soon as the browser is able to draw another frame.
         */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
     * particularly setting the lastTime variable that is required for the

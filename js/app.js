@@ -64,7 +64,7 @@ var Gem = function (sprite) {
     this.sprite = 'images/gem-orange.png';
     this.y = GEM_Y;
     this.collected = false;
-}
+};
 Gem.prototype = Object.create(AssetBase.prototype);
 Gem.prototype.constructor = Gem;
 Gem.prototype.update = function () {
@@ -78,7 +78,7 @@ Gem.prototype.update = function () {
         }
     }
     return this.collected;
-}
+};
 
 // **** Rock class ****
 var Rock = function (sprite) {
@@ -86,7 +86,7 @@ var Rock = function (sprite) {
 
     this.sprite = 'images/rock.png';
     this.y = ROCK_Y;
-}
+};
 Rock.prototype = Object.create(AssetBase.prototype);
 Rock.prototype.constructor = Rock;
 
@@ -98,21 +98,22 @@ var Player = function (sprite) {
     this.x = PLAYER_X;
     this.y = PLAYER_Y;
     this.remainingLives = PLAYER_LIVES;
-}
+};
 Player.prototype = Object.create(AssetBase.prototype);
 Player.prototype.constructor = Player;
 
 // check collision between player and enemies
 Player.prototype.checkCollision = function () {
     var isCollided = false;
-    for (var index in allEnemies) {
-        if ((Math.abs(allEnemies[index].x - this.x) < 50) && allEnemies[index].y === this.y) {
+
+    for (var i = 0; i < allEnemies.length; i++) {
+        if ((Math.abs(allEnemies[i].x - this.x) < 50) && allEnemies[i].y === this.y) {
             isCollided = true;
             break;
         }
     }
     return isCollided;
-}
+};
 
 Player.prototype.update = function (dt) {
     // check for Collision
@@ -121,14 +122,13 @@ Player.prototype.update = function (dt) {
         this.y = PLAYER_Y;
         this.remainingLives -= 1;
     }
-}
+};
 
 Player.prototype.checkBarrier = function (x, y) {
     var isBlocked = false;
-    var index;
     // check for Barrier due to rock
-    for (index in allRocks) {
-        if ((Math.abs(allRocks[index].x - x) < 50) && (Math.abs(allRocks[index].y - y) < 50)) {
+    for (var i=0; i < allRocks.length; i++) {
+        if ((Math.abs(allRocks[i].x - x) < 50) && (Math.abs(allRocks[i].y - y) < 50)) {
             isBlocked = true;
             break;
         }
@@ -138,17 +138,18 @@ Player.prototype.checkBarrier = function (x, y) {
         return isBlocked;
     }
     else {
-        for (index in allGems) {
-            if (allGems[index].collected === true &&
-                    (Math.abs(allGems[index].x - x) < 50) &&
-                    (Math.abs(allGems[index].y - y) < 50)) {
+        //for (index in allGems) {
+        for (var i=0; i < allGems.length; i++) {
+            if (allGems[i].collected === true &&
+                    (Math.abs(allGems[i].x - x) < 50) &&
+                    (Math.abs(allGems[i].y - y) < 50)) {
                 isBlocked = true;
                 break;
             }
         }
     }
     return isBlocked;
-}
+};
 
 Player.prototype.handleInput = function (key) {
     // reference:
@@ -216,19 +217,19 @@ Game.prototype.update = function (dt) {
             this.gameWon();
         }
     }
-}
+};
 
-Game.prototype.gameOver = function() {
+Game.prototype.gameOver = function () {
     document.getElementById("status").innerText = "Game Over";
     allEnemies = [];
     this.isGameOver = true;
-}
+};
 
 Game.prototype.gameWon = function () {
     document.getElementById("status").innerText = "You Win";
     allEnemies = [];
     this.isGameWon = true;
-}
+};
 
 // **** Utility ****
 // This listens for key presses and sends the keys to your
